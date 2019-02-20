@@ -1,3 +1,39 @@
+# Generated folders
+bin/
+gen/
+out/
+build/
+lib/
+logs/
+target/
+
+
+# Eclipse project files
+.classpath
+.project
+# Eclipse generated folders
+.metadata/
+.settings/
+RemoteSystemsTempFiles/
+Servers/
+# IDEA project files
+.idea/
+*.iml
+# IDEA Old-style project files
+*.ipr
+*.iws
+# Android Studio
+local.properties
+app/
+
+
+# Android built application files
+*.apk
+*.ap_
+# Android files for the dex VM
+*.dex
+
+
 # Compiled class file
 *.class
 
@@ -21,3 +57,20 @@
 
 # virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
 hs_err_pid*
+
+
+# Windows thumbnail db
+.DS_Store
+# Image thumbnails
+Thumbs.db
+
+
+# Gradle cache
+.gradle
+
+
+# keystore
+*.jks
+
+
+dependency-reduced-pom.xml
