@@ -1,19 +1,19 @@
-package com.percyvega.sum.server;
+package com.percyvega.decompose.server;
 
-import com.percyvega.sum.service.SumServiceImpl;
+import com.percyvega.decompose.service.DecomposeServiceImpl;
 import io.grpc.Server;
 import io.grpc.ServerBuilder;
 
 import java.io.IOException;
 
-public class SumServer {
+public class DecomposeServer {
 
-    public static void main(String[] args) throws IOException, InterruptedException {
-        System.out.println("Starting SumServer.main()");
+    public static void main(String[] args) throws InterruptedException, IOException {
+        System.out.println("Starting GreetingServer.main()");
 
         Server server = ServerBuilder
                 .forPort(50051)
-                .addService(new SumServiceImpl())
+                .addService(new DecomposeServiceImpl())
                 .build();
 
         server.start();
@@ -26,5 +26,4 @@ public class SumServer {
 
         server.awaitTermination();
     }
-
 }

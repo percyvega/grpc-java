@@ -1,5 +1,6 @@
 package com.percyvega.greeting.server;
 
+import com.percyvega.greeting.service.GreetServiceImpl;
 import io.grpc.Server;
 import io.grpc.ServerBuilder;
 

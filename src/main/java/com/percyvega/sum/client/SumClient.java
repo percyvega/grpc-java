@@ -12,7 +12,7 @@ public class SumClient {
         System.out.println("Starting SumClient.main()");
 
         ManagedChannel managedChannel = ManagedChannelBuilder
-                .forAddress("localhost", 50052)
+                .forAddress("localhost", 50051)
                 .usePlaintext()
                 .build();
 

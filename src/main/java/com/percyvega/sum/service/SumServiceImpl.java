@@ -1,4 +1,4 @@
-package com.percyvega.sum.server;
+package com.percyvega.sum.service;
 
 import com.proto.sum.SumRequest;
 import com.proto.sum.SumResponse;

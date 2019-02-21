@@ -1,19 +1,19 @@
-package com.percyvega.sum.server;
+package com.percyvega.average.server;
 
-import com.percyvega.sum.service.SumServiceImpl;
+import com.percyvega.average.service.AverageServiceImpl;
 import io.grpc.Server;
 import io.grpc.ServerBuilder;
 
 import java.io.IOException;
 
-public class SumServer {
+public class AverageServer {
 
-    public static void main(String[] args) throws IOException, InterruptedException {
-        System.out.println("Starting SumServer.main()");
+    public static void main(String[] args) throws InterruptedException, IOException {
+        System.out.println("Starting AverageServer.main()");
 
         Server server = ServerBuilder
                 .forPort(50051)
-                .addService(new SumServiceImpl())
+                .addService(new AverageServiceImpl())
                 .build();
 
         server.start();
@@ -26,5 +26,4 @@ public class SumServer {
 
         server.awaitTermination();
     }
-
 }

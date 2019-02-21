@@ -1,0 +1,18 @@
+syntax = "proto3";
+
+package decompose;
+
+option java_package = "com.proto.decompose";
+option java_multiple_files = true;
+
+message DecomposeRequest {
+    int32 number_to_decompose = 1;
+}
+
+message DecomposeResponse {
+    int32 factor = 1;
+}
+
+service DecomposeService {
+    rpc Decompose(DecomposeRequest) returns (stream DecomposeResponse);
+}
