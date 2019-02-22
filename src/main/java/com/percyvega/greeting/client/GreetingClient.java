@@ -20,7 +20,8 @@ public class GreetingClient {
 
 //        processUnary(managedChannel);
 //        processServerStream(managedChannel);
-        processClientStream(managedChannel);
+//        processClientStream(managedChannel);
+        processBidirectionalStream(managedChannel);
 
         System.out.println("Shutting down the channel");
         managedChannel.shutdown();
@@ -106,7 +107,65 @@ public class GreetingClient {
                     .build();
 
             requestObserver.onNext(longGreetRequest);
-            System.out.println("Send to server: " + longGreetRequest.getGreeting());
+            System.out.println("Sent to server: " + longGreetRequest.getGreeting());
+        }
+
+        requestObserver.onCompleted();
+
+        try {
+            countDownLatch.await(3L, TimeUnit.SECONDS);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private static void processBidirectionalStream(ManagedChannel managedChannel) {
+        GreetServiceGrpc.GreetServiceStub greetService =
+                GreetServiceGrpc.newStub(managedChannel);
+
+        CountDownLatch countDownLatch = new CountDownLatch(1);
+
+        StreamObserver<GreetEveryoneResponse> responseObserver = new StreamObserver<GreetEveryoneResponse>() {
+            @Override
+            public void onNext(GreetEveryoneResponse value) {
+                System.out.println("Received from server: " + value.getResult());
+            }
+
+            @Override
+            public void onError(Throwable t) {
+
+            }
+
+            @Override
+            public void onCompleted() {
+                System.out.println("Server has completed sending us something");
+
+                countDownLatch.countDown();
+            }
+        };
+
+        StreamObserver<GreetEveryoneRequest> requestObserver = greetService.greetEveryone(responseObserver);
+
+        for (int i = 0; i < 10; i++) {
+            Greeting greeting = Greeting
+                    .newBuilder()
+                    .setFirstName("Percy" + i)
+                    .setLastName("Vega" + i)
+                    .build();
+
+            GreetEveryoneRequest greetEveryoneRequest = GreetEveryoneRequest
+                    .newBuilder()
+                    .setGreeting(greeting)
+                    .build();
+
+            requestObserver.onNext(greetEveryoneRequest);
+            System.out.println("Sent to server: " + greetEveryoneRequest.getGreeting());
+
+            try {
+                Thread.sleep(200);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
         }
 
         requestObserver.onCompleted();
