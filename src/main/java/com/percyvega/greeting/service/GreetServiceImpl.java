@@ -1,6 +1,7 @@
 package com.percyvega.greeting.service;
 
 import com.proto.greet.*;
+import io.grpc.Status;
 import io.grpc.stub.StreamObserver;
 
 public class GreetServiceImpl extends GreetServiceGrpc.GreetServiceImplBase {
@@ -103,4 +104,5 @@ public class GreetServiceImpl extends GreetServiceGrpc.GreetServiceImplBase {
 
         return streamObserver;
     }
+
 }

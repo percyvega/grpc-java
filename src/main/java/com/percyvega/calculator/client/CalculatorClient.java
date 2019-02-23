@@ -1,34 +1,51 @@
-package com.percyvega.average.client;
+package com.percyvega.calculator.client;
 
-import com.proto.average.AverageRequest;
-import com.proto.average.AverageResponse;
-import com.proto.average.AverageServiceGrpc;
+import com.proto.calculator.*;
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
+import io.grpc.StatusRuntimeException;
 import io.grpc.stub.StreamObserver;
 
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
-public class AverageClient {
+public class CalculatorClient {
 
     public static void main(String[] args) {
-        System.out.println("Starting AverageClient.main()");
+        System.out.println("Starting CalculatorClient.main()");
 
         ManagedChannel managedChannel = ManagedChannelBuilder
                 .forAddress("localhost", 50051)
                 .usePlaintext()
                 .build();
 
-        processClientStream(managedChannel);
+//        processClientStream(managedChannel);
+        processErrorCall(managedChannel);
 
         System.out.println("Shutting down the channel");
         managedChannel.shutdown();
     }
 
+    private static void processErrorCall(ManagedChannel managedChannel) {
+        CalculatorServiceGrpc.CalculatorServiceBlockingStub calculatorService =
+                CalculatorServiceGrpc.newBlockingStub(managedChannel);
+
+        int number = -1;
+        try {
+            SquareRootResponse squareRootResponse = calculatorService.squareRoot(SquareRootRequest.newBuilder()
+                    .setNumber(number)
+                    .build());
+
+            System.out.println("Square root of " + number + " is " + squareRootResponse.getNumberRoot());
+        } catch (StatusRuntimeException e) {
+            System.out.println("Got an exception when calling square root.");
+            e.printStackTrace();
+        }
+    }
+
     private static void processClientStream(ManagedChannel managedChannel) {
-        AverageServiceGrpc.AverageServiceStub averageService =
-                AverageServiceGrpc.newStub(managedChannel);
+        CalculatorServiceGrpc.CalculatorServiceStub calculatorService =
+                CalculatorServiceGrpc.newStub(managedChannel);
 
         CountDownLatch countDownLatch = new CountDownLatch(1);
 
@@ -51,7 +68,7 @@ public class AverageClient {
             }
         };
 
-        StreamObserver<AverageRequest> requestObserver = averageService.average(responseObserver);
+        StreamObserver<AverageRequest> requestObserver = calculatorService.average(responseObserver);
 
         for (int i = 0; i < 10000; i++) {
             AverageRequest averageRequest = AverageRequest

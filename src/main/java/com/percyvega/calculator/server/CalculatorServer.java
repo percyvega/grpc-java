@@ -1,19 +1,19 @@
-package com.percyvega.average.server;
+package com.percyvega.calculator.server;
 
-import com.percyvega.average.service.AverageServiceImpl;
+import com.percyvega.calculator.service.CalculatorServiceImpl;
 import io.grpc.Server;
 import io.grpc.ServerBuilder;
 
 import java.io.IOException;
 
-public class AverageServer {
+public class CalculatorServer {
 
     public static void main(String[] args) throws InterruptedException, IOException {
-        System.out.println("Starting AverageServer.main()");
+        System.out.println("Starting CalculatorServer.main()");
 
         Server server = ServerBuilder
                 .forPort(50051)
-                .addService(new AverageServiceImpl())
+                .addService(new CalculatorServiceImpl())
                 .build();
 
         server.start();

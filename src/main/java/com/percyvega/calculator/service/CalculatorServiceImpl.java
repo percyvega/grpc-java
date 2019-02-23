@@ -1,15 +1,17 @@
-package com.percyvega.average.service;
+package com.percyvega.calculator.service;
 
-import com.proto.average.AverageRequest;
-import com.proto.average.AverageResponse;
-import com.proto.average.AverageServiceGrpc;
+import com.proto.calculator.AverageRequest;
+import com.proto.calculator.AverageResponse;
+import com.proto.calculator.CalculatorServiceGrpc;
+import com.proto.calculator.SquareRootResponse;
+import io.grpc.Status;
 import io.grpc.stub.StreamObserver;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.OptionalDouble;
 
-public class AverageServiceImpl extends AverageServiceGrpc.AverageServiceImplBase {
+public class CalculatorServiceImpl extends CalculatorServiceGrpc.CalculatorServiceImplBase {
 
     @Override
     public StreamObserver<AverageRequest> average(StreamObserver<AverageResponse> responseObserver) {
@@ -48,5 +50,27 @@ public class AverageServiceImpl extends AverageServiceGrpc.AverageServiceImplBas
         };
 
         return streamObserver;
+    }
+
+    @Override
+    public void squareRoot(com.proto.calculator.SquareRootRequest request, StreamObserver<com.proto.calculator.SquareRootResponse> responseObserver) {
+        int number = request.getNumber();
+
+        if (number >= 0) {
+            double sqrt = Math.sqrt(number);
+
+            SquareRootResponse response = SquareRootResponse
+                    .newBuilder()
+                    .setNumberRoot(sqrt)
+                    .build();
+
+            responseObserver.onNext(response);
+        } else {
+            responseObserver.onError(Status
+                    .INVALID_ARGUMENT
+                    .withDescription("The number sent must be positive.")
+                    .augmentDescription("Number sent: " + number)
+                    .asRuntimeException());
+        }
     }
 }
