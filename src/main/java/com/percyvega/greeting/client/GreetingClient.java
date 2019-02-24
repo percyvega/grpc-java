@@ -1,8 +1,7 @@
 package com.percyvega.greeting.client;
 
 import com.proto.greet.*;
-import io.grpc.ManagedChannel;
-import io.grpc.ManagedChannelBuilder;
+import io.grpc.*;
 import io.grpc.stub.StreamObserver;
 
 import java.util.concurrent.CountDownLatch;
@@ -21,7 +20,9 @@ public class GreetingClient {
 //        processUnary(managedChannel);
 //        processServerStream(managedChannel);
 //        processClientStream(managedChannel);
-        processBidirectionalStream(managedChannel);
+//        processBidirectionalStream(managedChannel);
+
+        processWithDeadline(managedChannel);
 
         System.out.println("Shutting down the channel");
         managedChannel.shutdown();
@@ -45,6 +46,35 @@ public class GreetingClient {
         GreetResponse greetResponse =
                 greetService.greet(greetRequest);
         System.out.println("Greet Response from server: " + greetResponse.getResult());
+    }
+
+    private static void processWithDeadline(ManagedChannel managedChannel) {
+        GreetServiceGrpc.GreetServiceBlockingStub greetService =
+                GreetServiceGrpc.newBlockingStub(managedChannel);
+
+        Greeting greeting = Greeting
+                .newBuilder()
+                .setFirstName("Percy")
+                .setLastName("Vega")
+                .build();
+
+        GreetRequest greetRequest = GreetRequest
+                .newBuilder()
+                .setGreeting(greeting)
+                .build();
+
+        try {
+            GreetResponse greetResponse =
+                    greetService
+                            .withDeadline(Deadline.after(800, TimeUnit.MILLISECONDS))
+                            .greetWithDeadline(greetRequest);
+            System.out.println("Greet Response from server: " + greetResponse.getResult());
+        } catch (StatusRuntimeException e) {
+            if(e.getStatus().getCode().equals(Status.DEADLINE_EXCEEDED.getCode())) {
+                System.out.println("Deadline has been exceeded, we won't want the response anymore");
+                e.printStackTrace();
+            }
+        }
     }
 
     private static void processServerStream(ManagedChannel managedChannel) {

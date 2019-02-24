@@ -47,4 +47,7 @@ service GreetService {
     rpc GreetManyTimes(GreetManyTimesRequest) returns (stream GreetManyTimesResponse) {};
     rpc LongGreet(stream LongGreetRequest) returns (LongGreetResponse) {};
     rpc GreetEveryone(stream GreetEveryoneRequest) returns (stream GreetEveryoneResponse) {};
+
+    // this rpc must complete in less than 300 ms.
+    rpc GreetWithDeadline(GreetRequest) returns (GreetResponse) {};
 }

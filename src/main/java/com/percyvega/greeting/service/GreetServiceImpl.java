@@ -1,8 +1,10 @@
 package com.percyvega.greeting.service;
 
 import com.proto.greet.*;
-import io.grpc.Status;
+import io.grpc.Context;
 import io.grpc.stub.StreamObserver;
+
+import java.util.Random;
 
 public class GreetServiceImpl extends GreetServiceGrpc.GreetServiceImplBase {
 
@@ -105,4 +107,34 @@ public class GreetServiceImpl extends GreetServiceGrpc.GreetServiceImplBase {
         return streamObserver;
     }
 
+    @Override
+    public void greetWithDeadline(GreetRequest request, StreamObserver<GreetResponse> responseObserver) {
+        Greeting greeting = request.getGreeting();
+        String firstName = greeting.getFirstName();
+
+        String result = "Hello " + firstName;
+        GreetResponse response = GreetResponse.newBuilder()
+                .setResult(result)
+                .build();
+
+        Context context = Context.current();
+
+        Random random = new Random();
+        try {
+            for (int i = 0; i < 3; i++) {
+                int sleepFor = Math.abs(random.nextInt() % 100);
+                System.out.println("Sleeping for " + sleepFor);
+                Thread.sleep(sleepFor);
+                if(context.isCancelled()) {
+                    return; // do not perform any more work, the deadline has passed
+                }
+            }
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        responseObserver.onNext(response);
+
+        responseObserver.onCompleted();
+    }
 }
