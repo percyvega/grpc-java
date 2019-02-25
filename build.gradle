@@ -21,10 +21,10 @@ repositories {
 }
 
 dependencies {
-    compile 'io.grpc:grpc-netty-shaded:1.18.0'
+    compile 'io.grpc:grpc-netty-shaded:1.18.0' // shaded: includes the ssl libraries
     compile 'io.grpc:grpc-protobuf:1.18.0'
     compile 'io.grpc:grpc-stub:1.18.0'
-    compile 'io.grpc:grpc-services:1.18.0'
+    compile 'io.grpc:grpc-services:1.18.0' // reflection
 
     testCompile group: 'junit', name: 'junit', version: '4.12'
 

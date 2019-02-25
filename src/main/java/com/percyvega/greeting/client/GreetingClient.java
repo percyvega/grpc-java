@@ -2,27 +2,39 @@ package com.percyvega.greeting.client;
 
 import com.proto.greet.*;
 import io.grpc.*;
+import io.grpc.netty.shaded.io.grpc.netty.GrpcSslContexts;
+import io.grpc.netty.shaded.io.grpc.netty.NettyChannelBuilder;
 import io.grpc.stub.StreamObserver;
 
+import javax.net.ssl.SSLException;
+import java.io.File;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
 public class GreetingClient {
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws SSLException {
         System.out.println("Starting GreetingClient.main()");
 
-        ManagedChannel managedChannel = ManagedChannelBuilder
+//        ManagedChannel managedChannel = ManagedChannelBuilder
+//                .forAddress("localhost", 50051)
+//                .usePlaintext()
+//                .build();
+
+        ManagedChannel managedChannel = NettyChannelBuilder // for SSL
                 .forAddress("localhost", 50051)
-                .usePlaintext()
+                .sslContext(GrpcSslContexts
+                        .forClient()
+                        .trustManager(new File("ssl/ca.crt"))
+                    .build())
                 .build();
 
-//        processUnary(managedChannel);
+//        processWithDeadline(managedChannel);
+
+        processUnary(managedChannel);
 //        processServerStream(managedChannel);
 //        processClientStream(managedChannel);
 //        processBidirectionalStream(managedChannel);
-
-        processWithDeadline(managedChannel);
 
         System.out.println("Shutting down the channel");
         managedChannel.shutdown();
