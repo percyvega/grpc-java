@@ -41,7 +41,7 @@ public class GreetingClient {
     }
 
     private static void processUnary(ManagedChannel managedChannel) {
-        GreetServiceGrpc.GreetServiceBlockingStub greetService =
+        GreetServiceGrpc.GreetServiceBlockingStub blockingStub =
                 GreetServiceGrpc.newBlockingStub(managedChannel);
 
         Greeting greeting = Greeting
@@ -56,12 +56,12 @@ public class GreetingClient {
                 .build();
 
         GreetResponse greetResponse =
-                greetService.greet(greetRequest);
+                blockingStub.greet(greetRequest);
         System.out.println("Greet Response from server: " + greetResponse.getResult());
     }
 
     private static void processWithDeadline(ManagedChannel managedChannel) {
-        GreetServiceGrpc.GreetServiceBlockingStub greetService =
+        GreetServiceGrpc.GreetServiceBlockingStub blockingStub =
                 GreetServiceGrpc.newBlockingStub(managedChannel);
 
         Greeting greeting = Greeting
@@ -77,7 +77,7 @@ public class GreetingClient {
 
         try {
             GreetResponse greetResponse =
-                    greetService
+                    blockingStub
                             .withDeadline(Deadline.after(800, TimeUnit.MILLISECONDS))
                             .greetWithDeadline(greetRequest);
             System.out.println("Greet Response from server: " + greetResponse.getResult());
@@ -90,7 +90,7 @@ public class GreetingClient {
     }
 
     private static void processServerStream(ManagedChannel managedChannel) {
-        GreetServiceGrpc.GreetServiceBlockingStub greetService =
+        GreetServiceGrpc.GreetServiceBlockingStub blockingStub =
                 GreetServiceGrpc.newBlockingStub(managedChannel);
 
         Greeting greeting = Greeting
@@ -104,13 +104,13 @@ public class GreetingClient {
                 .setGreeting(greeting)
                 .build();
 
-        greetService
+        blockingStub
                 .greetManyTimes(greetManyTimesRequest)
                 .forEachRemaining(greetManyTimesResponse -> System.out.println("Greet Response from server: " + greetManyTimesResponse.getResult()));
     }
 
     private static void processClientStream(ManagedChannel managedChannel) {
-        GreetServiceGrpc.GreetServiceStub greetService =
+        GreetServiceGrpc.GreetServiceStub asyncStub =
                 GreetServiceGrpc.newStub(managedChannel);
 
         CountDownLatch countDownLatch = new CountDownLatch(1);
@@ -134,7 +134,7 @@ public class GreetingClient {
             }
         };
 
-        StreamObserver<LongGreetRequest> requestObserver = greetService.longGreet(responseObserver);
+        StreamObserver<LongGreetRequest> requestObserver = asyncStub.longGreet(responseObserver);
 
         for (int i = 0; i < 10; i++) {
             Greeting greeting = Greeting
@@ -162,7 +162,7 @@ public class GreetingClient {
     }
 
     private static void processBidirectionalStream(ManagedChannel managedChannel) {
-        GreetServiceGrpc.GreetServiceStub greetService =
+        GreetServiceGrpc.GreetServiceStub asyncStub =
                 GreetServiceGrpc.newStub(managedChannel);
 
         CountDownLatch countDownLatch = new CountDownLatch(1);
@@ -186,7 +186,7 @@ public class GreetingClient {
             }
         };
 
-        StreamObserver<GreetEveryoneRequest> requestObserver = greetService.greetEveryone(responseObserver);
+        StreamObserver<GreetEveryoneRequest> requestObserver = asyncStub.greetEveryone(responseObserver);
 
         for (int i = 0; i < 10; i++) {
             Greeting greeting = Greeting

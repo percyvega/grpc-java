@@ -43,11 +43,19 @@ message GreetEveryoneResponse {
 }
 
 service GreetService {
+
+    // Unary
     rpc Greet(GreetRequest) returns (GreetResponse) {};
+
+    // Server streaming
     rpc GreetManyTimes(GreetManyTimesRequest) returns (stream GreetManyTimesResponse) {};
+
+    // Client streaming
     rpc LongGreet(stream LongGreetRequest) returns (LongGreetResponse) {};
+
+    // Bidirectional streaming
     rpc GreetEveryone(stream GreetEveryoneRequest) returns (stream GreetEveryoneResponse) {};
 
-    // this rpc must complete in less than 300 ms.
+    // RPC with deadline. This rpc must complete in less than 300 ms.
     rpc GreetWithDeadline(GreetRequest) returns (GreetResponse) {};
 }
